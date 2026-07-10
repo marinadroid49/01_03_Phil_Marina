@@ -35,14 +35,18 @@ jobs:
       - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: any::sessionInfo
-          cache-version: ${{ hashFiles('hidden_tests_dir/test_hidden.R') }}
-          extra-packages: |
+          packages: |
+            any::sessioninfo
             any::testthat
             any::ggplot2
             any::languageR
             any::gradethis
             github::rstudio/ggcheck
+          cache-version: ${{ hashFiles('hidden_tests_dir/test_hidden.R') }}
+          dependencies: '"hard"'
+          install-pandoc: false
+          install-quarto: false
+          
 
       # 5. Запускаем скрытые тесты
       - name: Run hidden tests
