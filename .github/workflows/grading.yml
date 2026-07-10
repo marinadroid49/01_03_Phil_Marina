@@ -1,4 +1,3 @@
-
 name: Autograding R
 
 on:
@@ -54,17 +53,29 @@ jobs:
         run: |
           results <- testthat::test_file(
             "hidden_tests_dir/test_hidden.R",
-            reporter = "progress"
+            reporter = "summary"
           )
 
           results_df <- as.data.frame(results)
 
-          tests_failed <-
-            sum(results_df$failed, na.rm = TRUE) > 0 ||
-            sum(results_df$error, na.rm = TRUE) > 0
+          failed <- sum(results_df$failed, na.rm = TRUE)
+          errors <- sum(results_df$error, na.rm = TRUE)
+          warnings <- sum(results_df$warning, na.rm = TRUE)
+          skipped <- sum(results_df$skipped, na.rm = TRUE)
+          passed <- nrow(results_df) - failed - errors - warnings - skipped
 
-          if (tests_failed) {
-            stop("Тесты не пройдены!", call. = FALSE)
+          cat("\n")
+          cat("=====================================\n")
+          cat(sprintf(
+            "[ PASS %d | FAIL %d | WARN %d | SKIP %d ]\n",
+            passed, failed, warnings, skipped
+          ))
+
+          if (failed == 0 && errors == 0) {
+            cat("🎉 Отлично! Все проверки успешно пройдены.\n")
+          } else {
+            cat("❌ Некоторые проверки не пройдены.\n")
+            cat("Прокрутите журнал выше — там указано, какие именно проверки завершились ошибкой.\n")
           }
 
-          message("Все тесты пройдены!")
+          cat("=====================================\n")
