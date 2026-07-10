@@ -32,20 +32,17 @@ jobs:
           use-public-rspm: true
 
       # 4. Устанавливаем и кэшируем необходимые пакеты
-      #
-      # DESCRIPTION в репозитории тестов не используется.
-      # Кэш пересоздаётся при изменении файла скрытых тестов.
       - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          dependencies: false
+          packages: any::sessionInfo
           cache-version: ${{ hashFiles('hidden_tests_dir/test_hidden.R') }}
           extra-packages: |
             any::testthat
             any::ggplot2
             any::languageR
             any::gradethis
-            rstudio/ggcheck
+            github::rstudio/ggcheck
 
       # 5. Запускаем скрытые тесты
       - name: Run hidden tests
